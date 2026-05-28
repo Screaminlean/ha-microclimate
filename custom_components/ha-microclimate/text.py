@@ -1,4 +1,11 @@
-"""Support for Blynk text inputs."""
+"""Support for Blynk text inputs.
+
+Text entities allow string data entry:
+- Current value read from coordinator.data (cached)
+- Changes written via direct API call
+- Optimistic cache update for instant UI feedback
+- Special packed time helper for complex time formats
+"""
 
 import logging
 import re
@@ -32,32 +39,41 @@ class BlynkText(BlynkEntity, TextEntity):
         self._attr_native_min = config.get("min_length", INPUT_TEXT_MIN_LENGTH)
         self._attr_native_max = config.get("max_length", INPUT_TEXT_MAX_LENGTH)
         self._attr_mode = "text"
-        self._attr_unique_id = f"{DOMAIN}_{self._pin}_text"
-        self._attr_name = config[CONF_PIN_NAME]
-        self._value = ""
 
     @property
     def native_value(self) -> str:
-        """Return the current value."""
+        """Return the current value from coordinator cache."""
         if not self.coordinator.data or self._pin not in self.coordinator.data:
-            return self._value
+            return ""
 
         value = str(self.coordinator.data[self._pin])
-        _LOGGER.debug("Text input %s value: %s", self._pin, value)
+        _LOGGER.debug("Text input %s value from cache: %s", self._pin, value)
         return value
 
     async def async_set_value(self, value: str) -> None:
-        """Set new value."""
+        """Set new value with optimistic update.
+        
+        Write pattern that doesn't disrupt polling:
+        1. Async write to API (non-blocking, uses write lock)
+        2. Optimistically update coordinator cache for instant UI feedback
+        3. Write state to Home Assistant
+        4. Next scheduled coordinator refresh confirms actual device state
+        
+        No manual refresh requested - avoids disrupting the polling schedule.
+        """
         try:
             _LOGGER.debug("Setting text input %s to %s", self._pin, value)
 
-            self._value = value
-            await self._api.set_pin_value(self._pin, value)
+            # Async write to device (non-blocking, uses persistent session)
+            success = await self._api.set_pin_value(self._pin, value)
 
-            if self.coordinator.data is not None:
-                self.coordinator.data[self._pin] = value
-
-            self.async_write_ha_state()
+            if success:
+                # Optimistic cache update for instant UI response
+                if self.coordinator.data is not None:
+                    self.coordinator.data[self._pin] = value
+                self.async_write_ha_state()
+            else:
+                _LOGGER.warning("Failed to set text input %s to %s", self._pin, value)
         except Exception as err:
             _LOGGER.error("Error setting text value: %s", err)
             raise

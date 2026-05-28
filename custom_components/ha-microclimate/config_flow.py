@@ -12,12 +12,19 @@ from .const import (
     BINARY_SENSOR_DEVICE_CLASSES,
     COMMON_UNITS,
     CONF_DEVICE_CLASS,
+    CONF_DEVICE_MODEL,
+    CONF_DEVICE_NAME,
     CONF_PIN_NAME,
     CONF_PIN_TYPE,
     CONF_SCAN_INTERVAL,
     CONF_TOKEN,
     CONF_UNIT,
+    DEFAULT_DEVICE_MODEL,
+    DEFAULT_DEVICE_NAME,
     DEFAULT_SCAN_INTERVAL,
+    DEVICE_MODEL_EVO_CONNECTED_2,
+    DEVICE_MODEL_EVO_LITE,
+    DEVICE_MODEL_GENERIC,
     DOMAIN,
     INPUT_NUMBER_MAX,
     INPUT_NUMBER_MIN,
@@ -34,6 +41,7 @@ from .const import (
     PIN_TYPE_SENSOR,
     PIN_TYPE_SWITCH,
     SENSOR_DEVICE_CLASSES,
+    SUPPORTED_MODELS,
     SWITCH_DEVICE_CLASSES,
 )
 from .pin_map_loader import get_default_pin_type, get_pin_defaults
@@ -44,12 +52,14 @@ _LOGGER = logging.getLogger(__name__)
 class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for HA Microclimate."""
 
-    VERSION = 12
+    VERSION = 13
 
     def __init__(self) -> None:
         """Initialize the config flow."""
         self._token = None
         self._scan_interval = DEFAULT_SCAN_INTERVAL
+        self._device_name = DEFAULT_DEVICE_NAME
+        self._device_model = DEVICE_MODEL_EVO_CONNECTED_2
         self._discovered_pins = []
         self._pin_values = {}
         self._pin_selection = []
@@ -95,7 +105,7 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not (10 <= self._scan_interval <= 3600):
                 errors["base"] = "invalid_scan_interval"
             else:
-                return await self.async_step_connection()
+                return await self.async_step_device_info()
 
         schema = {
             vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): selector.NumberSelector(
@@ -114,8 +124,39 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
+    async def async_step_device_info(self, user_input=None):
+        """Step 3: Device identification for Home Assistant Device Registry."""
+        errors = {}
+        if user_input is not None:
+            self._device_name = user_input.get(CONF_DEVICE_NAME, DEFAULT_DEVICE_NAME).strip()
+            self._device_model = user_input.get(CONF_DEVICE_MODEL, DEVICE_MODEL_EVO_CONNECTED_2)
+
+            if not self._device_name:
+                self._device_name = DEFAULT_DEVICE_NAME
+
+            return await self.async_step_connection()
+
+        schema = {
+            vol.Optional(CONF_DEVICE_NAME, default=DEFAULT_DEVICE_NAME): str,
+            vol.Optional(CONF_DEVICE_MODEL, default=DEVICE_MODEL_EVO_CONNECTED_2): selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=[{"value": k, "label": v} for k, v in SUPPORTED_MODELS.items()],
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                ),
+            ),
+        }
+
+        return self.async_show_form(
+            step_id="device_info",
+            data_schema=vol.Schema(schema),
+            errors=errors,
+            description_placeholders={
+                "note": "This information is used to group all pins under a single device in Home Assistant."
+            },
+        )
+
     async def async_step_connection(self, user_input=None):
-        """Step 3: Discover pins via HTTP."""
+        """Step 4: Discover pins via HTTP."""
         errors = {}
 
         try:
@@ -143,7 +184,7 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_pin_selection(self, user_input=None):
-        """Step 4: Select pins to configure."""
+        """Step 5: Select pins to configure."""
         errors = {}
 
         if user_input is not None:
@@ -185,7 +226,7 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_pin_config(self, user_input=None):
-        """Step 5: Configure individual pins."""
+        """Step 6: Configure individual pins."""
         errors = {}
 
         if user_input is not None:
@@ -236,11 +277,13 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             config_data = {
                 CONF_TOKEN: self._token,
                 CONF_SCAN_INTERVAL: self._scan_interval,
+                CONF_DEVICE_NAME: self._device_name,
+                CONF_DEVICE_MODEL: self._device_model,
                 "pins": self._pin_configs,
             }
 
             return self.async_create_entry(
-                title=f"HA Microclimate ({self._token[:8]}...) - HTTP",
+                title=self._device_name,
                 data=config_data,
             )
 

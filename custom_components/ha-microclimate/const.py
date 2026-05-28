@@ -14,11 +14,13 @@ from homeassistant.components.switch import (
 
 DOMAIN: Final = "ha_microclimate"
 VERSION: Final = "1.0.0"
-MANUFACTURER: Final = "Community"
+MANUFACTURER: Final = "Microclimate"
 
 # Configuration
 CONF_TOKEN: Final = "token"
 CONF_SCAN_INTERVAL: Final = "scan_interval"
+CONF_DEVICE_NAME: Final = "device_name"
+CONF_DEVICE_MODEL: Final = "device_model"
 CONF_PIN_TYPE: Final = "pin_type"
 CONF_PIN_NAME: Final = "pin_name"
 CONF_DEVICE_CLASS: Final = "device_class"
@@ -27,6 +29,19 @@ CONF_UNIT: Final = "unit"
 # Defaults
 DEFAULT_SCAN_INTERVAL: Final = 120
 DEFAULT_TIMEOUT: Final = 10
+DEFAULT_DEVICE_NAME: Final = "Microclimate Device"
+DEFAULT_DEVICE_MODEL: Final = "Blynk Connected Device"
+
+# Supported Device Models
+DEVICE_MODEL_EVO_CONNECTED_2: Final = "Evo Connected 2"
+DEVICE_MODEL_EVO_LITE: Final = "Evo Lite"
+DEVICE_MODEL_GENERIC: Final = "Generic Blynk Device"
+
+SUPPORTED_MODELS: Final = {
+    DEVICE_MODEL_EVO_CONNECTED_2: "Microclimate Evo Connected 2",
+    DEVICE_MODEL_EVO_LITE: "Microclimate Evo Lite",
+    DEVICE_MODEL_GENERIC: "Generic Device",
+}
 
 # API
 API_URL: Final = "https://microclimate.blynk.cc/external/api"

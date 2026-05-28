@@ -1,4 +1,11 @@
-"""Support for Blynk select entities."""
+"""Support for Blynk select entities.
+
+Select entities are writable dropdowns that use coordinator cache:
+- Current option read from coordinator.data (no API polling)
+- Option changes use direct API calls
+- Optimistic cache updates for immediate UI response
+- Value-to-label mapping for user-friendly display
+"""
 
 import logging
 
@@ -45,11 +52,14 @@ class BlynkSelect(BlynkEntity, SelectEntity):
         # Keep both directions for efficient read/write conversion.
         self._label_to_value = {label: value for value, label in self._value_to_label.items()}
         self._attr_options = list(self._label_to_value.keys())
-        self._attr_unique_id = f"{DOMAIN}_{self._pin}_select"
 
     @property
     def current_option(self) -> str | None:
-        """Return current selected option label."""
+        """Return current selected option label from coordinator cache.
+        
+        Reads raw value from coordinator.data and translates it to
+        user-friendly label. No API call is made here.
+        """
         if not self.coordinator.data or self._pin not in self.coordinator.data:
             return None
 
@@ -67,15 +77,31 @@ class BlynkSelect(BlynkEntity, SelectEntity):
         return raw_value
 
     async def async_select_option(self, option: str) -> None:
-        """Change selected option."""
-        # UI label is converted back to the raw value expected by the device.
+        """Change selected option with optimistic update.
+        
+        Write pattern that doesn't disrupt polling:
+        1. Convert UI label to raw device value
+        2. Async write to API (non-blocking, uses write lock)
+        3. Optimistically update coordinator cache for instant UI feedback
+        4. Write state to Home Assistant
+        5. Next scheduled coordinator refresh confirms actual device state
+        
+        No manual refresh requested - avoids disrupting the polling schedule.
+        """
+        # UI label is converted back to the raw value expected by the device
         raw_value = self._label_to_value.get(option, option)
         _LOGGER.debug("Setting select %s to %s (raw %s)", self._pin, option, raw_value)
 
-        await self._api.set_pin_value(self._pin, raw_value)
-        if self.coordinator.data is not None:
-            self.coordinator.data[self._pin] = raw_value
-        self.async_write_ha_state()
+        # Async write to device (non-blocking, uses persistent session)
+        success = await self._api.set_pin_value(self._pin, raw_value)
+        
+        if success:
+            # Optimistic cache update for instant UI response
+            if self.coordinator.data is not None:
+                self.coordinator.data[self._pin] = raw_value
+            self.async_write_ha_state()
+        else:
+            _LOGGER.warning("Failed to set select %s to %s", self._pin, option)
 
 
 async def async_setup_entry(

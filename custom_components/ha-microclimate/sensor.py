@@ -1,4 +1,11 @@
-"""Support for Blynk sensors."""
+"""Support for Blynk sensors.
+
+Sensor entities demonstrate the coordinator pattern for read-only entities:
+- All state reads come from coordinator.data
+- No direct API calls are made by sensor entities
+- Data is automatically refreshed by the coordinator at the configured interval
+- Multiple sensors update simultaneously from a single batch API request
+"""
 
 import logging
 
@@ -62,13 +69,18 @@ class BlynkSensor(BlynkEntity, SensorEntity):
 
     @property
     def native_value(self):
-        """Return the state of the sensor."""
+        """Return the state of the sensor from coordinator cache.
+        
+        This reads directly from coordinator.data which is populated
+        by the centralized polling mechanism. No API call is made here.
+        Sensors are purely read-only and never make individual requests.
+        """
         if not self.coordinator.data or self._pin not in self.coordinator.data:
             return None
 
         raw_value = self.coordinator.data[self._pin]
         parsed_value = self._parse_value(raw_value)
-        _LOGGER.debug("Pin %s - Raw: %s, Parsed: %s", self._pin, raw_value, parsed_value)
+        _LOGGER.debug("Pin %s - Raw from cache: %s, Parsed: %s", self._pin, raw_value, parsed_value)
         return parsed_value
 
 

@@ -21,6 +21,18 @@
           "scan_interval": "How frequently to fetch data from Blynk Cloud (recommended: 60-300 seconds)"
         }
       },
+      "device_info": {
+        "title": "Device Information",
+        "description": "Identify your device for Home Assistant. All pins will be grouped under this device in the Device Registry.",
+        "data": {
+          "device_name": "Device Name",
+          "device_model": "Device Model"
+        },
+        "data_description": {
+          "device_name": "A friendly name for your device (e.g., 'Living Room Thermostat')",
+          "device_model": "The model of your Microclimate device"
+        }
+      },
       "connection": {
         "title": "Testing Connection",
         "description": "Please wait while we test the connection and discover pins"

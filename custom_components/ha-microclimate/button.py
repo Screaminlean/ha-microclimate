@@ -1,4 +1,11 @@
-"""Support for Blynk button with visual feedback."""
+"""Support for Blynk button with visual feedback.
+
+Button entities trigger actions on the device:
+- Buttons have no state to read from coordinator
+- Press actions send commands directly via API
+- Visual feedback provided in Home Assistant UI
+- Press tracking in entity attributes
+"""
 
 import asyncio
 import logging
@@ -22,8 +29,6 @@ class BlynkButton(BlynkEntity, ButtonEntity):
         """Initialize the button."""
         super().__init__(coordinator, pin, config[CONF_PIN_NAME])
         self._api = api
-        self._attr_name = config[CONF_PIN_NAME]
-        self._attr_unique_id = f"{DOMAIN}_{self._pin}_button"
 
         self._is_visually_pressed = False
         self._reset_timer = None

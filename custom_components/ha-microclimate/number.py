@@ -1,4 +1,11 @@
-"""Support for Blynk number inputs."""
+"""Support for Blynk number inputs.
+
+Number entities are writable and use a hybrid approach:
+- State reads from coordinator.data (cached, no API overhead)
+- Commands use direct API calls for immediate response
+- Optimistic updates to coordinator.data for instant UI feedback
+- Next coordinator refresh confirms actual device state
+"""
 
 import logging
 
@@ -33,12 +40,16 @@ class BlynkNumber(BlynkEntity, NumberEntity):
 
     @property
     def native_value(self):
-        """Return the current value."""
+        """Return the current value from coordinator cache.
+        
+        This reads directly from coordinator.data which is populated
+        by the centralized polling mechanism. No API call is made here.
+        """
         if not self.coordinator.data or self._pin not in self.coordinator.data:
             return None
 
         value = self.coordinator.data[self._pin]
-        _LOGGER.debug("Number input %s value: %s", self._pin, value)
+        _LOGGER.debug("Number input %s value from cache: %s", self._pin, value)
 
         try:
             return float(value)
@@ -46,14 +57,29 @@ class BlynkNumber(BlynkEntity, NumberEntity):
             return None
 
     async def async_set_native_value(self, value: float) -> None:
-        """Set new value."""
+        """Set new value with optimistic update.
+        
+        Write pattern that doesn't disrupt polling:
+        1. Async write to API (non-blocking, uses write lock)
+        2. Optimistically update coordinator cache for instant UI feedback
+        3. Write state to Home Assistant
+        4. Next scheduled coordinator refresh confirms actual device state
+        
+        No manual refresh requested - avoids disrupting the polling schedule.
+        """
         try:
             _LOGGER.debug("Setting number input %s to %s", self._pin, value)
-            await self._api.set_pin_value(self._pin, value)
-
-            if self.coordinator.data:
-                self.coordinator.data[self._pin] = value
-            self.async_write_ha_state()
+            
+            # Async write to device (non-blocking, uses persistent session)
+            success = await self._api.set_pin_value(self._pin, value)
+            
+            if success:
+                # Optimistic cache update for instant UI response
+                if self.coordinator.data:
+                    self.coordinator.data[self._pin] = value
+                self.async_write_ha_state()
+            else:
+                _LOGGER.warning("Failed to set number input %s to %s", self._pin, value)
         except Exception as err:
             _LOGGER.error("Error setting number value: %s", err)
 
