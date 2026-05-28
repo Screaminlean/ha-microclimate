@@ -44,7 +44,81 @@ Then restart Home Assistant.
 2. Click Add Integration
 3. Search for HA Microclimate
 4. Enter your Auth Token
-5. Configure HTTP polling interval and finish pin setup
+5. Configure HTTP polling interval and device information
+6. Select and configure the pins you want to use
+
+## How It Works
+
+### Architecture Overview
+
+HA Microclimate uses a modern coordinator-based architecture designed for optimal performance and clean organization:
+
+#### 1. **Batch Request Mode**
+Instead of making individual HTTP requests for each pin, the integration fetches all configured pins in a single batch request:
+- **Old approach:** 50 pins = 50 HTTP requests per polling cycle
+- **New approach:** 50 pins = 1 HTTP request per polling cycle
+
+This dramatically reduces API load and improves response times, especially for devices like the Evo Connected 2 with 100+ virtual pins.
+
+#### 2. **Centralized Data Coordinator**
+A single `MicroclimateDataUpdateCoordinator` manages all data fetching:
+- Polls Blynk Cloud API at your configured interval (default: 120 seconds)
+- Fetches all pins in one batch request
+- Distributes data to all entities simultaneously
+- Implements health monitoring and error recovery
+- All entities read from the coordinator's cached data (no individual polling)
+
+#### 3. **Device Registry Grouping**
+All virtual pins (V0, V1, V2, etc.) are grouped under a single physical device in Home Assistant:
+- Creates a unified device dashboard showing all sensors, switches, and controls
+- Professional appearance instead of scattered entities
+- Easy device-level automations and management
+- Support for multiple device models (Evo Connected 2, Evo Lite, etc.)
+
+#### 4. **Optimized Async Write Handling**
+When you change a value (like adjusting temperature setpoint):
+- Write uses persistent aiohttp session with connection pooling
+- Write lock prevents concurrent write conflicts
+- Optimistic UI update provides instant feedback
+- Does NOT disrupt the coordinator's polling schedule
+- Next scheduled poll confirms the actual device state
+
+#### 5. **Entity Types**
+
+**Read-Only Entities** (Sensor, Binary Sensor):
+- Read state purely from coordinator cache
+- Never make individual API calls
+- Update automatically when coordinator refreshes
+
+**Writable Entities** (Switch, Number, Select, Text, Button):
+- Read state from coordinator cache
+- Write commands go directly to API with async locking
+- Use optimistic updates for instant UI response
+- Next coordinator refresh confirms actual state
+
+### Performance Benefits
+
+- **Reduced API Load:** Single request per polling interval instead of hundreds
+- **Consistent Data:** All entities see the same data snapshot
+- **Connection Pooling:** Persistent session reduces connection overhead
+- **Non-Blocking Writes:** Commands don't interfere with polling schedule
+- **Instant UI Feedback:** Optimistic updates before device confirmation
+- **Clean Organization:** All entities grouped under one device
+
+### Data Flow
+
+```
+[Blynk Cloud API]
+       ↓ (every 120s, single batch request)
+[MicroclimateDataUpdateCoordinator]
+       ↓ (distributes to all entities)
+[coordinator.data cache]
+       ↓
+[Sensors] [Switches] [Numbers] [Selects] [Buttons]
+  (read)    (read)     (read)    (read)    (action)
+              ↓          ↓         ↓         ↓
+         [write to API with lock] →→→→→→→ [Device]
+```
 
 ## Data Logging for Contributors
 
