@@ -13,6 +13,9 @@
 [!NOTE]
 **Disclaimer:** This is an unofficial, community-driven integration. It is not affiliated with, authorized, maintained, or endorsed by Microclimate or Blynk.
 
+[!IMPORTANT]
+**Pre-release versioning:** Versions in the `0.0.x` range are pre-release and not fully tested. The patch number will increment (`0.0.1`, `0.0.2`, ...) until the first stable release.
+
 This project integrates Home Assistant with Connect-compatible devices through Blynk Cloud.
 
 ## Prerequisites

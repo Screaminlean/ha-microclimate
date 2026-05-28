@@ -13,7 +13,7 @@ from homeassistant.components.switch import (
 )
 
 DOMAIN: Final = "ha_microclimate"
-VERSION: Final = "1.0.0"
+VERSION: Final = "0.0.1"
 MANUFACTURER: Final = "Microclimate"
 
 # Configuration
