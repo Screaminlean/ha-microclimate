@@ -1,4 +1,4 @@
-"""Config flow for Climate Connect Bridge."""
+"""Config flow for HA Microclimate."""
 
 import logging
 
@@ -42,7 +42,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Climate Connect Bridge."""
+    """Handle a config flow for HA Microclimate."""
 
     VERSION = 12
 
@@ -240,7 +240,7 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             }
 
             return self.async_create_entry(
-                title=f"Climate Connect Bridge ({self._token[:8]}...) - HTTP",
+                title=f"HA Microclimate ({self._token[:8]}...) - HTTP",
                 data=config_data,
             )
 
@@ -387,7 +387,7 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class ClimateConnectBridgeOptionsFlowHandler(config_entries.OptionsFlow):
-    """Handle Climate Connect Bridge options."""
+    """Handle HA Microclimate options."""
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""

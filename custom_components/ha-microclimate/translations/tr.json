@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Climate Connect Bridge Kurulumu",
+        "title": "HA Microclimate Kurulumu",
         "description": "Blynk kimlik dogrulama tokeninizi girin",
         "data": {
           "token": "Kimlik Dogrulama Token"
@@ -75,13 +75,13 @@
       "timeout": "Baglanti zaman asimi - internet baglantinizi kontrol edin"
     },
     "abort": {
-      "already_configured": "Bu Climate Connect Bridge cihazi zaten yapilandirilmis"
+      "already_configured": "Bu HA Microclimate cihazi zaten yapilandirilmis"
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Climate Connect Bridge Secenekleri",
+        "title": "HA Microclimate Secenekleri",
         "description": "Cihaz ayarlarini guncelleyin",
         "data": {
           "scan_interval": "Guncelleme Araligi (saniye)"

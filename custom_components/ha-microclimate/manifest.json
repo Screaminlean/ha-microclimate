@@ -1,12 +1,12 @@
 {
-  "domain": "climate_connect_bridge",
-  "name": "Climate Connect Bridge (Unofficial)",
+  "domain": "ha_microclimate",
+  "name": "HA Microclimate",
   "codeowners": [],
   "config_flow": true,
-  "documentation": "https://github.com/Screaminlean/Climate-Connect-Bridge-Unofficial-",
+  "documentation": "https://github.com/Screaminlean/ha-microclimate",
   "integration_type": "device",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/Screaminlean/Climate-Connect-Bridge-Unofficial-/issues",
+  "issue_tracker": "https://github.com/Screaminlean/ha-microclimate/issues",
   "requirements": ["requests>=2.25.0"],
   "version": "1.0.1"
 }

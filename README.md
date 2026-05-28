@@ -1,16 +1,23 @@
-# Climate Connect Bridge (Unofficial)
+<div align="center">
+  <img src="custom_components/ha-microclimate/images/icon_512.png" alt="HA Microclimate Logo" width="200"/>
+</div>
+
+# HA Microclimate
 
 [![HACS](https://img.shields.io/badge/HACS-custom%20integration-41BDF5.svg)](https://hacs.xyz/)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2026.5%2B-41BDF5.svg)](https://www.home-assistant.io/)
-[![Release](https://img.shields.io/github/v/release/Screaminlean/Climate-Connect-Bridge-Unofficial-)](https://github.com/Screaminlean/Climate-Connect-Bridge-Unofficial-/releases)
-[![License](https://img.shields.io/github/license/Screaminlean/Climate-Connect-Bridge-Unofficial-)](LICENSE)
-[![Issues](https://img.shields.io/github/issues/Screaminlean/Climate-Connect-Bridge-Unofficial-)](https://github.com/Screaminlean/Climate-Connect-Bridge-Unofficial-/issues)
+[![Release](https://img.shields.io/github/v/release/Screaminlean/ha-microclimate)](https://github.com/Screaminlean/ha-microclimate/releases)
+[![License](https://img.shields.io/github/license/Screaminlean/ha-microclimate)](LICENSE)
+[![Issues](https://img.shields.io/github/issues/Screaminlean/ha-microclimate)](https://github.com/Screaminlean/ha-microclimate/issues)
+
+[!NOTE]
+**Disclaimer:** This is an unofficial, community-driven integration. It is not affiliated with, authorized, maintained, or endorsed by Microclimate or Blynk.
 
 This project integrates Home Assistant with Connect-compatible devices through Blynk Cloud.
 
 ## Prerequisites
 
-1. A Blynk Cloud account and device Auth Token
+1. A Device Auth Token, you can obtain this from the [Web Dashboard](http://microclimate.blynk.cc/)
 2. Home Assistant with HACS installed
 
 ## Installation
@@ -19,15 +26,15 @@ This project integrates Home Assistant with Connect-compatible devices through B
 
 1. Open HACS -> Integrations
 2. Add this repository as a Custom Repository (category: Integration):
-	https://github.com/Screaminlean/Climate-Connect-Bridge-Unofficial-
-3. Install Climate Connect Bridge (Unofficial)
+	https://github.com/Screaminlean/ha-microclimate
+3. Install HA Microclimate
 4. Restart Home Assistant
 
 ### Manual
 
 Copy the integration folder into:
 
-`custom_components/climate_connect_bridge`
+`custom_components/ha-microclimate`
 
 Then restart Home Assistant.
 
@@ -35,7 +42,7 @@ Then restart Home Assistant.
 
 1. Go to Settings -> Devices & Services
 2. Click Add Integration
-3. Search for Climate Connect Bridge
+3. Search for HA Microclimate
 4. Enter your Auth Token
 5. Configure HTTP polling interval and finish pin setup
 
@@ -149,12 +156,12 @@ Source of truth remains CSV:
 2. Generate JSON with:
 
 ```powershell
-python scripts/generate_pin_map_json.py --csv docs/Evo_Blynk_Pins.csv --out custom_components/climate_connect_bridge/pin_map.json
+python scripts/generate_pin_map_json.py --csv docs/Evo_Blynk_Pins.csv --out custom_components/ha-microclimate/pin_map.json
 ```
 
 ## Project Identity
 
-Climate Connect Bridge (Unofficial) is an independent integration with its own architecture, workflows, and roadmap.
+HA Microclimate is an independent integration with its own architecture, workflows, and roadmap.
 
 ## License
 

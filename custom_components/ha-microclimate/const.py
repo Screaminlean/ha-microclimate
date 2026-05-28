@@ -1,4 +1,4 @@
-"""Constants for the Climate Connect Bridge integration."""
+"""Constants for the HA Microclimate integration."""
 from datetime import timedelta
 from typing import Final
 
@@ -12,7 +12,7 @@ from homeassistant.components.switch import (
     SwitchDeviceClass,
 )
 
-DOMAIN: Final = "climate_connect_bridge"
+DOMAIN: Final = "ha_microclimate"
 VERSION: Final = "2.0.1"
 MANUFACTURER: Final = "Community"
 
@@ -99,7 +99,7 @@ INPUT_TEXT_MIN_LENGTH: Final = 0
 INPUT_TEXT_MAX_LENGTH: Final = 100
 
 # Integration Metadata
-ATTRIBUTION: Final = "Data provided by Blynk Cloud via Climate Connect Bridge (Unofficial)"
+ATTRIBUTION: Final = "Data provided by Blynk Cloud via HA Microclimate"
 INTEGRATION_CREATED: Final = "2026-05-28"
 INTEGRATION_CREATOR: Final = "Screaminlean"
 

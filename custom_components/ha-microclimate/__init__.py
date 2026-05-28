@@ -1,4 +1,4 @@
-"""The Climate Connect Bridge integration."""
+"""The HA Microclimate integration."""
 from __future__ import annotations
 
 import logging
@@ -47,7 +47,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Climate Connect Bridge from a config entry."""
+    """Set up HA Microclimate from a config entry."""
     api = BlynkCloudAPI(entry.data[CONF_TOKEN])
 
     try:
@@ -134,7 +134,7 @@ class BlynkEntity(CoordinatorEntity):
 
         self._attr_device_info = {
             "identifiers": {(DOMAIN, coordinator.name)},
-            "name": f"Climate Connect Bridge ({coordinator.name})",
+            "name": f"HA Microclimate ({coordinator.name})",
             "manufacturer": MANUFACTURER,
             "model": "Cloud Device",
             "sw_version": VERSION,

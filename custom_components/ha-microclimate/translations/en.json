@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Climate Connect Bridge Setup",
+        "title": "HA Microclimate Setup",
         "description": "Enter your Blynk authentication token",
         "data": {
           "token": "Authentication Token"
@@ -75,13 +75,13 @@
       "timeout": "Connection timeout - please check your internet connection"
     },
     "abort": {
-      "already_configured": "This Climate Connect Bridge device is already configured"
+      "already_configured": "This HA Microclimate device is already configured"
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Climate Connect Bridge Options",
+        "title": "HA Microclimate Options",
         "description": "Update device settings",
         "data": {
           "scan_interval": "Update Interval (seconds)"
