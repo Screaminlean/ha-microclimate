@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Screaminlean/ha-microclimate/main/custom_components/ha-microclimate/brand/icon.png" alt="HA Microclimate Logo" width="200"/>
+	<img src="https://raw.githubusercontent.com/Screaminlean/ha-microclimate/main/custom_components/ha_microclimate/brand/icon.png" alt="HA Microclimate Logo" width="200"/>
 </div>
 
 # HA Microclimate
@@ -37,7 +37,7 @@ This project integrates Home Assistant with Connect-compatible devices through B
 
 Copy the integration folder into:
 
-`custom_components/ha-microclimate`
+`custom_components/ha_microclimate`
 
 Then restart Home Assistant.
 
@@ -233,7 +233,7 @@ Source of truth remains CSV:
 2. Generate JSON with:
 
 ```powershell
-python scripts/generate_pin_map_json.py --csv docs/Evo_Blynk_Pins.csv --out custom_components/ha-microclimate/pin_map.json
+python scripts/generate_pin_map_json.py --csv docs/Evo_Blynk_Pins.csv --out custom_components/ha_microclimate/pin_map.json
 ```
 
 ## Project Identity

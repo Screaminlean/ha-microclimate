@@ -83,7 +83,7 @@ def main() -> None:
     parser.add_argument(
         "--out",
         type=Path,
-        default=Path("custom_components/ha-microclimate/pin_map.json"),
+        default=Path("custom_components/ha_microclimate/pin_map.json"),
         help="Output JSON path",
     )
     args = parser.parse_args()
