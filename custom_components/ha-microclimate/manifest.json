@@ -1,0 +1,14 @@
+{
+  "domain": "climate_connect_bridge",
+  "name": "Climate Connect Bridge (Unofficial)",
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://github.com/Screaminlean/Climate-Connect-Bridge-Unofficial-",
+  "integration_type": "device",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/Screaminlean/Climate-Connect-Bridge-Unofficial-/issues",
+  "requirements": ["requests>=2.25.0"],
+  "version": "1.0.1"
+}
+
+

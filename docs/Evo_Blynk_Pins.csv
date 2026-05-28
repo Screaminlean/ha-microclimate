@@ -1,0 +1,118 @@
+PIN,Description
+V0,Yellow Channel Current Temperature
+V1,
+V2,Blue Channel Current Temperature
+V3,
+V4,Yellow Channel Live Output Percentage
+V5,
+V6,Blue Channel Live Output Percentage
+V7,
+V8,
+V9,
+V10,
+V11,
+V12,
+V13,
+V14,
+V15,
+V16,Yellow Channel Name
+V17,
+V18,Blue Channel Name
+V19,
+V20,Season 1 Start Date DD/MM
+V21,Season 2 Start Date DD/MM
+V22,Season 3 Start Date DD/MM
+V23,Season 4 Start Date DD/MM
+V24,
+V25,
+V26,Thermostat Date
+V27,Thermostat Time
+V28,
+V29,Thermostat Name
+V30,
+V31,Yellow Channel Name
+V32,Yellow Channel Season 1 Daytime Start Time
+V33,Yellow Channel Season 1 Daytime Temp Setpoint
+V34,Yellow Channel Season 1 Nighttime Start Time
+V35,Yellow Channel Season 1 Nighttime Temp Setpoint
+V36,Yellow Channel Season 2 Daytime Start Time
+V37,Yellow Channel Season 2 Daytime Temp Setpoint
+V38,Yellow Channel Season 2 Nighttime Start Time
+V39,Yellow Channel Season 2 Nighttime Temp Setpoint
+V40,Yellow Channel Season 3 Daytime Start Time
+V41,Yellow Channel Season 3 Daytime Temp Setpoint
+V42,Yellow Channel Season 3 Nighttime Start Time
+V43,Yellow Channel Season 3 Nighttime Temp Setpoint
+V44,Yellow Channel Season 4 Daytime Start Time
+V45,Yellow Channel Season 4 Daytime Temp Setpoint
+V46,Yellow Channel Season 4 Nighttime Start Time
+V47,Yellow Channel Season 4 Nighttime Temp Setpoint
+V48,Yellow Channel Ramp Time
+V49,Yellow Channel Under Temperature Alarm
+V50,Yellow Channel Over Temperature Alarm
+V51,
+V52,Yellow Channel Mode Selector (0=Fixed 1=Heating 2=Cooling)
+V53,Yellow Channel Timing Selector (0=Constant 1=Day/Night 2=Multi 3=Seasons)
+V54,Yellow Channel Control Selector (0=Pulse 1=Dimming)
+V55,
+V56,
+V57,
+V58,
+V59,
+V60,
+V61,
+V62,
+V63,
+V64,
+V65,
+V66,
+V67,
+V68,
+V69,
+V70,
+V71,
+V72,
+V73,
+V74,
+V75,
+V76,
+V77,
+V78,
+V79,
+V80,
+V81,
+V82,
+V83,
+V84,
+V85,
+V86,
+V87,
+V88,
+V89,
+V90,
+V91,Blue Channel Name
+V92,Blue Channel Season 1 Daytime Start Time
+V93,
+V94,Blue Channel Season 1 Nighttime Start Time
+V95,
+V96,Blue Channel Season 2 Daytime Start Time
+V97,
+V98,Blue Channel Season 2 Nighttime Start Time
+V99,
+V100,Blue Channel Season 3 Daytime Start Time
+V101,
+V102,Blue Channel Season 3 Nighttime Start Time
+V103,
+V104,Blue Channel Season 4 Daytime Start Time
+V105,
+V106,Blue Channel Season 4 Nighttime Start Time
+V107,
+V108,Blue Channel Ramp Time
+V109,Blue Channel Under Temperature Alarm
+V110,Blue Channel Over Temperature Alarm
+V111,
+V112,
+V113,
+V114,
+V115,
+V116,

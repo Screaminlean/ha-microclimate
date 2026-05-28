@@ -1,0 +1,95 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Climate Connect Bridge Kurulumu",
+        "description": "Blynk kimlik dogrulama tokeninizi girin",
+        "data": {
+          "token": "Kimlik Dogrulama Token"
+        },
+        "data_description": {
+          "token": "Blynk uygulamasindan aldiginiz 32 karakterlik kimlik dogrulama token"
+        }
+      },
+      "http_config": {
+        "title": "HTTP Yoklama Yapilandirmasi",
+        "description": "Blynk API'den ne siklikla veri cekilecegini ayarlayin",
+        "data": {
+          "scan_interval": "Guncelleme Araligi (saniye)"
+        },
+        "data_description": {
+          "scan_interval": "Blynk Cloud'dan ne siklikla veri cekilecegi (onerilen: 60-300 saniye)"
+        }
+      },
+      "connection": {
+        "title": "Baglanti Test Ediliyor",
+        "description": "Baglanti test edilirken ve pinler kesfedilirken lutfen bekleyin"
+      },
+      "pin_selection": {
+        "title": "Pin Yapilandirmasi",
+        "description": "Etkinlestirilecek pinleri secin ve turlerini ayarlayin. Mevcut degerler referans icin gosterilmistir.",
+        "data": {
+          "enable": "Etkinlestir",
+          "type": "Tur"
+        }
+      },
+      "pin_config": {
+        "title": "{pin_number} Pinini Yapilandir",
+        "description": "{pin_number} pini icin ayarlari yapilandirin\nMevcut deger: {current_value}",
+        "data": {
+          "pin_name": "Pin Adi",
+          "device_class": "Cihaz Sinifi",
+          "unit": "Olcum Birimi",
+          "min": "Minimum Deger",
+          "max": "Maksimum Deger",
+          "step": "Adim Boyutu",
+          "mode": "Giris Modu",
+          "min_length": "Minimum Uzunluk",
+          "max_length": "Maksimum Uzunluk",
+          "pattern": "Dogrulama Deseni (regex)",
+          "select_values": "Select Ham Degerleri (virgulle ayrilmis)",
+          "select_options": "Select Etiketleri (virgulle ayrilmis)"
+        },
+        "data_description": {
+          "pin_name": "Home Assistant'ta bu pin icin kullanici dostu ad",
+          "device_class": "Dogru ikon ve birim isleme icin cihaz sinifi",
+          "unit": "Olcum birimi (sicaklik, nem, vb.)",
+          "min": "Bu girdi icin izin verilen minimum deger",
+          "max": "Bu girdi icin izin verilen maksimum deger",
+          "step": "Deger degisiklikleri icin adim boyutu",
+          "mode": "Girisin nasil gosterilecegi (gorsel icin kaydirici, sayisal icin kutu)",
+          "min_length": "Minimum metin uzunlugu",
+          "max_length": "Maksimum metin uzunlugu",
+          "pattern": "Metin dogrulama icin duzenli ifade",
+          "select_values": "Blynk'e gonderilecek ham degerler, etiketlerle ayni sirada",
+          "select_options": "Home Assistant'ta gorulecek etiketler, ham degerlerle ayni sirada"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Blynk Cloud'a baglanilamadi",
+      "invalid_token_format": "Kimlik dogrulama token en az 10 karakter olmalidir",
+      "no_pins_found": "Pin bulunamadi - cihaz yapilandirmanizi kontrol edin",
+      "no_pins_selected": "En az bir pin secilmelidir",
+      "invalid_scan_interval": "Guncelleme araligi 10 ile 3600 saniye arasinda olmalidir",
+      "timeout": "Baglanti zaman asimi - internet baglantinizi kontrol edin"
+    },
+    "abort": {
+      "already_configured": "Bu Climate Connect Bridge cihazi zaten yapilandirilmis"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Climate Connect Bridge Secenekleri",
+        "description": "Cihaz ayarlarini guncelleyin",
+        "data": {
+          "scan_interval": "Guncelleme Araligi (saniye)"
+        },
+        "data_description": {
+          "scan_interval": "Blynk Cloud'dan ne siklikla veri cekilecegi (onerilen: 60-300 saniye)"
+        }
+      }
+    }
+  }
+}
