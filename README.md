@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Screaminlean/ha-microclimate/main/custom_components/ha-microclimate/images/icon_512.png" alt="HA Microclimate Logo" width="200"/>
+  <img src="https://raw.githubusercontent.com/Screaminlean/ha-microclimate/main/custom_components/ha-microclimate/brand/icon.png" alt="HA Microclimate Logo" width="200"/>
 </div>
 
 # HA Microclimate
