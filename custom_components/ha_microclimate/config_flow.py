@@ -113,6 +113,10 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 if isinstance(known_mapping, dict) and known_mapping:
                     config["select_values"] = [str(value) for value in known_mapping.keys()]
                     config["select_options"] = [str(label) for label in known_mapping.values()]
+            elif config[CONF_PIN_TYPE] == PIN_TYPE_INPUT_TEXT:
+                pattern = pin_defaults.get("pattern")
+                if isinstance(pattern, str) and pattern:
+                    config["pattern"] = pattern
 
             hidden_pin_configs[pin] = config
 
@@ -433,6 +437,7 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             )
         elif pin_type == PIN_TYPE_INPUT_TEXT:
+            default_pattern = str(pin_defaults.get("pattern") or "")
             schema.update(
                 {
                     vol.Optional("min_length", default=INPUT_TEXT_MIN_LENGTH): selector.NumberSelector(
@@ -449,7 +454,7 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             mode=selector.NumberSelectorMode.BOX,
                         ),
                     ),
-                    vol.Optional("pattern"): str,
+                    vol.Optional("pattern", default=default_pattern): str,
                 }
             )
         elif pin_type == PIN_TYPE_SELECT:

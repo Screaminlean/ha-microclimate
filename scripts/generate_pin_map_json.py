@@ -31,6 +31,8 @@ PIN_TYPE_ALIASES = {
     "packed_time": "packed_time_text",
 }
 
+DATE_DD_MM_PATTERN = r"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])$"
+
 
 def parse_select_options(description: str) -> dict[str, str]:
     """Extract enum pairs like (0=Fixed 1=Heating 2=Cooling)."""
@@ -57,6 +59,17 @@ def infer_default_type(description: str, select_options: dict[str, str]) -> str 
         return "packed_time_text"
     if "name" in lower_desc:
         return "input_text"
+    return None
+
+
+def infer_text_pattern(description: str, pin_type: str | None) -> str | None:
+    """Infer a validation pattern for text pins from description text."""
+    if pin_type != "input_text":
+        return None
+
+    if "start date dd/mm" in description.lower():
+        return DATE_DD_MM_PATTERN
+
     return None
 
 
@@ -106,6 +119,7 @@ def build_pin_map(csv_path: Path) -> dict[str, dict[str, object]]:
             show_in_ui = parse_show_in_ui(raw_hidden)
             select_options = parse_select_options(description)
             default_pin_type = explicit_pin_type or infer_default_type(description, select_options)
+            text_pattern = infer_text_pattern(description, default_pin_type)
 
             payload: dict[str, object] = {
                 "description": description,
@@ -113,6 +127,8 @@ def build_pin_map(csv_path: Path) -> dict[str, dict[str, object]]:
             }
             if default_pin_type:
                 payload["default_pin_type"] = default_pin_type
+            if text_pattern:
+                payload["pattern"] = text_pattern
             if select_options:
                 payload["select_options"] = select_options
 

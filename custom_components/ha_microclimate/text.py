@@ -44,7 +44,19 @@ class BlynkText(BlynkEntity, TextEntity):
         self._api = api
         self._attr_native_min = config.get("min_length", INPUT_TEXT_MIN_LENGTH)
         self._attr_native_max = config.get("max_length", INPUT_TEXT_MAX_LENGTH)
+        self._attr_pattern = config.get("pattern")
         self._attr_mode = "text"
+        self._compiled_pattern = None
+
+        if self._attr_pattern:
+            try:
+                self._compiled_pattern = re.compile(self._attr_pattern)
+            except re.error:
+                _LOGGER.warning(
+                    "Ignoring invalid text pattern for %s: %s",
+                    self._pin,
+                    self._attr_pattern,
+                )
 
     @property
     def native_value(self) -> str:
@@ -68,6 +80,11 @@ class BlynkText(BlynkEntity, TextEntity):
         No manual refresh requested - avoids disrupting the polling schedule.
         """
         try:
+            if self._compiled_pattern and not self._compiled_pattern.fullmatch(value):
+                raise ValueError(
+                    f"Value '{value}' does not match required pattern {self._attr_pattern}"
+                )
+
             _LOGGER.debug("Setting text input %s to %s", self._pin, value)
 
             # Async write to device (non-blocking, uses persistent session)
