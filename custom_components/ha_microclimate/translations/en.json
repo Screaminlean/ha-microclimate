@@ -3,22 +3,22 @@
     "step": {
       "user": {
         "title": "HA Microclimate Setup",
-        "description": "Enter your Blynk authentication token",
+        "description": "Enter your Microclimate authentication token",
         "data": {
           "token": "Authentication Token"
         },
         "data_description": {
-          "token": "Your 32-character Blynk authentication token from the Blynk app"
+          "token": "Your device authentication token from the Microclimate web dashboard"
         }
       },
       "http_config": {
         "title": "HTTP Polling Configuration",
-        "description": "Configure how often to poll the Blynk API for updates",
+        "description": "Configure how often to poll the Microclimate API for updates",
         "data": {
           "scan_interval": "Update Interval (seconds)"
         },
         "data_description": {
-          "scan_interval": "How frequently to fetch data from Blynk Cloud (recommended: 60-300 seconds)"
+          "scan_interval": "How frequently to fetch data from the Microclimate API (recommended: 60-300 seconds)"
         }
       },
       "device_info": {
@@ -29,7 +29,7 @@
           "device_model": "Device Model"
         },
         "data_description": {
-          "device_name": "A friendly name for your device (e.g., 'Living Room Thermostat')",
+          "device_name": "A friendly name for your device (e.g., 'Tortoise Vivarium')",
           "device_model": "The model of your Microclimate device"
         }
       },
@@ -79,7 +79,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect to Blynk Cloud",
+      "cannot_connect": "Failed to connect to Microclimate Cloud",
       "invalid_token_format": "Authentication token must be at least 10 characters",
       "no_pins_found": "No pins discovered - check your device configuration",
       "no_pins_selected": "At least one pin must be selected",
@@ -99,7 +99,7 @@
           "scan_interval": "Update Interval (seconds)"
         },
         "data_description": {
-          "scan_interval": "How frequently to fetch data from Blynk Cloud (recommended: 60-300 seconds)"
+          "scan_interval": "How frequently to fetch data from the Microclimate API (recommended: 60-300 seconds)"
         }
       }
     }

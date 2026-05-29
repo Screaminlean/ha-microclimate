@@ -16,6 +16,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import BlynkEntity
 from .const import (
+    CONF_ENABLED_BY_DEFAULT,
     DOMAIN,
     INPUT_NUMBER_MAX,
     INPUT_NUMBER_MIN,
@@ -31,7 +32,12 @@ class BlynkNumber(BlynkEntity, NumberEntity):
 
     def __init__(self, coordinator, api, pin, config):
         """Initialize the number input."""
-        super().__init__(coordinator, pin, config["pin_name"])
+        super().__init__(
+            coordinator,
+            pin,
+            config["pin_name"],
+            enabled_by_default=config.get(CONF_ENABLED_BY_DEFAULT, True),
+        )
         self._api = api
         self._attr_native_min_value = config.get("min", INPUT_NUMBER_MIN)
         self._attr_native_max_value = config.get("max", INPUT_NUMBER_MAX)

@@ -42,6 +42,11 @@ def get_default_pin_type(pin: str) -> str:
     return str(get_pin_defaults(pin).get("default_pin_type", PIN_TYPE_SENSOR))
 
 
+def is_pin_visible_in_ui(pin: str) -> bool:
+    """Return whether the pin should be shown during user setup."""
+    return bool(get_pin_defaults(pin).get("show_in_ui", True))
+
+
 def get_select_mapping(pin: str) -> dict[str, str]:
     """Return select value-label mapping for a pin."""
     raw_mapping = get_pin_defaults(pin).get("select_options", {})

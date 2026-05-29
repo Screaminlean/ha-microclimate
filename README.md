@@ -111,7 +111,7 @@ When you change a value (like adjusting temperature setpoint):
 ### Data Flow
 
 ```
-[Blynk Cloud API]
+[Microclimate API]
        ↓ (every 120s, single batch request)
 [MicroclimateDataUpdateCoordinator]
        ↓ (distributes to all entities)
@@ -230,6 +230,8 @@ The integration uses a generated JSON pin map for runtime defaults (for example 
 Source of truth remains CSV:
 
 1. [docs/Evo_Blynk_Pins.csv](docs/Evo_Blynk_Pins.csv)
+	- `Type` is optional; when set it overrides inference (`sensor`, `input_number`, `packed_time_text`, etc.)
+	- `Hidden` is optional; use `true` to keep a mapped pin out of setup selection UI
 2. Generate JSON with:
 
 ```powershell

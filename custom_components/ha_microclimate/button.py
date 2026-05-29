@@ -17,7 +17,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import BlynkEntity
-from .const import CONF_PIN_NAME, CONF_PIN_TYPE, DOMAIN, PIN_TYPE_BUTTON
+from .const import (
+    CONF_ENABLED_BY_DEFAULT,
+    CONF_PIN_NAME,
+    CONF_PIN_TYPE,
+    DOMAIN,
+    PIN_TYPE_BUTTON,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +33,12 @@ class BlynkButton(BlynkEntity, ButtonEntity):
 
     def __init__(self, coordinator, api, pin, config):
         """Initialize the button."""
-        super().__init__(coordinator, pin, config[CONF_PIN_NAME])
+        super().__init__(
+            coordinator,
+            pin,
+            config[CONF_PIN_NAME],
+            enabled_by_default=config.get(CONF_ENABLED_BY_DEFAULT, True),
+        )
         self._api = api
 
         self._is_visually_pressed = False

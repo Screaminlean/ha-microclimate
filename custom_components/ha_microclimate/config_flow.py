@@ -1,6 +1,7 @@
 """Config flow for HA Microclimate."""
 
 import logging
+import re
 
 import voluptuous as vol
 from homeassistant import config_entries
@@ -13,6 +14,7 @@ from .const import (
     COMMON_UNITS,
     CONF_DEVICE_CLASS,
     CONF_DEVICE_MODEL,
+    CONF_ENABLED_BY_DEFAULT,
     CONF_DEVICE_NAME,
     CONF_PIN_NAME,
     CONF_PIN_TYPE,
@@ -44,7 +46,7 @@ from .const import (
     SUPPORTED_MODELS,
     SWITCH_DEVICE_CLASSES,
 )
-from .pin_map_loader import get_default_pin_type, get_pin_defaults
+from .pin_map_loader import get_default_pin_type, get_pin_defaults, is_pin_visible_in_ui
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,6 +63,7 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._device_name = DEFAULT_DEVICE_NAME
         self._device_model = DEVICE_MODEL_EVO_CONNECTED_2
         self._discovered_pins = []
+        self._selectable_pins = []
         self._pin_values = {}
         self._pin_selection = []
         self._pin_types = {}
@@ -69,6 +72,64 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._pin_config_order = []
         self._current_pin_index = 0
         self._api = None
+
+    @staticmethod
+    def _sanitize_pin_description(description: str) -> str:
+        """Convert description text into a safe, stable schema key suffix."""
+        sanitized = re.sub(r"[^a-z0-9]+", "_", description.strip().lower()).strip("_")
+        return sanitized or "pin"
+
+    def _get_pin_selection_keys(self, pin: str) -> tuple[str, str]:
+        """Build dynamic form keys for enable/type fields using pin description."""
+        pin_defaults = self._pin_defaults.get(pin, {})
+        description = str(pin_defaults.get("description") or pin)
+        suffix = self._sanitize_pin_description(description)
+        return f"enable_{pin}_{suffix}", f"type_{pin}_{suffix}"
+
+    def _build_hidden_pin_configs(self) -> dict[str, dict]:
+        """Create disabled-by-default pin configs for non-selectable discovered pins."""
+        hidden_pin_configs: dict[str, dict] = {}
+
+        for pin in self._discovered_pins:
+            if pin in self._pin_selection:
+                continue
+
+            pin_defaults = self._pin_defaults.get(pin, {})
+            is_mapped = bool(pin_defaults.get("description"))
+            show_in_ui = is_pin_visible_in_ui(pin)
+
+            # Mapped pins that are shown in UI are user-managed (selected or skipped).
+            if is_mapped and show_in_ui:
+                continue
+
+            config: dict[str, object] = {
+                CONF_PIN_TYPE: get_default_pin_type(pin),
+                CONF_PIN_NAME: str(pin_defaults.get("description") or pin),
+                CONF_ENABLED_BY_DEFAULT: False,
+            }
+
+            if config[CONF_PIN_TYPE] == PIN_TYPE_SELECT:
+                known_mapping = pin_defaults.get("select_options", {})
+                if isinstance(known_mapping, dict) and known_mapping:
+                    config["select_values"] = [str(value) for value in known_mapping.keys()]
+                    config["select_options"] = [str(label) for label in known_mapping.values()]
+
+            hidden_pin_configs[pin] = config
+
+        return hidden_pin_configs
+
+    def _build_config_data(self) -> dict:
+        """Build config entry payload including auto-hidden pin configs."""
+        pins = dict(self._pin_configs)
+        pins.update(self._build_hidden_pin_configs())
+
+        return {
+            CONF_TOKEN: self._token,
+            CONF_SCAN_INTERVAL: self._scan_interval,
+            CONF_DEVICE_NAME: self._device_name,
+            CONF_DEVICE_MODEL: self._device_model,
+            "pins": pins,
+        }
 
     async def async_step_user(self, user_input=None):
         """Step 1: Token entry."""
@@ -163,13 +224,22 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             pins = await self._api.get_all_pins()
             if pins:
                 self._discovered_pins = []
+                self._selectable_pins = []
                 self._pin_values = {}
                 for pin, value in pins.items():
                     pin_name = pin.upper()
                     self._discovered_pins.append(pin_name)
                     self._pin_values[pin_name] = value
                     self._pin_defaults[pin_name] = get_pin_defaults(pin_name)
+                    if self._pin_defaults[pin_name].get("description") and is_pin_visible_in_ui(pin_name):
+                        self._selectable_pins.append(pin_name)
                     _LOGGER.info("Pin %s current value: %s", pin_name, value)
+
+                if not self._selectable_pins:
+                    return self.async_create_entry(
+                        title=self._device_name,
+                        data=self._build_config_data(),
+                    )
 
                 return await self.async_step_pin_selection()
 
@@ -191,28 +261,37 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._pin_selection = []
             self._pin_types = {}
 
-            for pin in self._discovered_pins:
-                enable_key = f"enable_{pin}"
-                type_key = f"type_{pin}"
+            for pin in self._selectable_pins:
+                enable_key, type_key = self._get_pin_selection_keys(pin)
+                # Keep compatibility if a flow instance still posts legacy keys.
+                legacy_enable_key = f"enable_{pin}"
+                legacy_type_key = f"type_{pin}"
 
-                if user_input.get(enable_key, False):
+                if user_input.get(enable_key, user_input.get(legacy_enable_key, False)):
                     self._pin_selection.append(pin)
-                    self._pin_types[pin] = user_input.get(type_key, PIN_TYPE_SENSOR)
+                    self._pin_types[pin] = user_input.get(
+                        type_key,
+                        user_input.get(legacy_type_key, PIN_TYPE_SENSOR),
+                    )
 
-            if not self._pin_selection:
-                errors["base"] = "no_pins_selected"
-            else:
+            if self._pin_selection:
                 self._pin_config_order = self._pin_selection.copy()
                 self._current_pin_index = 0
                 return await self.async_step_pin_config()
 
+            return self.async_create_entry(
+                title=self._device_name,
+                data=self._build_config_data(),
+            )
+
         schema = {}
-        for pin in sorted(self._discovered_pins):
+        for pin in sorted(self._selectable_pins):
             default_type = get_default_pin_type(pin)
-            schema[vol.Optional(f"enable_{pin}", default=False)] = selector.BooleanSelector(
+            enable_key, type_key = self._get_pin_selection_keys(pin)
+            schema[vol.Optional(enable_key, default=True)] = selector.BooleanSelector(
                 selector.BooleanSelectorConfig()
             )
-            schema[vol.Optional(f"type_{pin}", default=default_type)] = selector.SelectSelector(
+            schema[vol.Optional(type_key, default=default_type)] = selector.SelectSelector(
                 selector.SelectSelectorConfig(
                     options=[{"value": k, "label": v} for k, v in PIN_TYPE_OPTIONS.items()],
                     mode=selector.SelectSelectorMode.DROPDOWN,
@@ -235,6 +314,7 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             conf = {
                 CONF_PIN_TYPE: self._pin_types[prev_pin],
                 CONF_PIN_NAME: user_input[CONF_PIN_NAME],
+                CONF_ENABLED_BY_DEFAULT: True,
             }
             if CONF_DEVICE_CLASS in user_input:
                 conf[CONF_DEVICE_CLASS] = user_input[CONF_DEVICE_CLASS]
@@ -274,17 +354,9 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._pin_configs[prev_pin] = conf
 
         if self._current_pin_index >= len(self._pin_config_order):
-            config_data = {
-                CONF_TOKEN: self._token,
-                CONF_SCAN_INTERVAL: self._scan_interval,
-                CONF_DEVICE_NAME: self._device_name,
-                CONF_DEVICE_MODEL: self._device_model,
-                "pins": self._pin_configs,
-            }
-
             return self.async_create_entry(
                 title=self._device_name,
-                data=config_data,
+                data=self._build_config_data(),
             )
 
         pin = self._pin_config_order[self._current_pin_index]

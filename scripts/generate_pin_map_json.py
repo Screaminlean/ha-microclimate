@@ -11,6 +11,26 @@ from pathlib import Path
 ENUM_PATTERN = re.compile(r"\((?P<inner>[^)]*)\)")
 PAIR_PATTERN = re.compile(r"(?P<value>\d+)\s*=\s*(?P<label>[^=]+?)(?=\s+\d+\s*=|$)")
 
+VALID_PIN_TYPES = {
+    "sensor",
+    "binary_sensor",
+    "switch",
+    "input_number",
+    "button",
+    "input_text",
+    "select",
+    "packed_time_text",
+}
+
+PIN_TYPE_ALIASES = {
+    "binary": "binary_sensor",
+    "number": "input_number",
+    "text": "input_text",
+    "packeddate": "packed_time_text",
+    "packed_date": "packed_time_text",
+    "packed_time": "packed_time_text",
+}
+
 
 def parse_select_options(description: str) -> dict[str, str]:
     """Extract enum pairs like (0=Fixed 1=Heating 2=Cooling)."""
@@ -40,6 +60,35 @@ def infer_default_type(description: str, select_options: dict[str, str]) -> str 
     return None
 
 
+def normalize_pin_type(raw_type: str) -> str | None:
+    """Normalize CSV type values to integration pin type constants."""
+    normalized = raw_type.strip().lower().replace(" ", "_")
+    if not normalized:
+        return None
+
+    normalized = PIN_TYPE_ALIASES.get(normalized, normalized)
+    if normalized not in VALID_PIN_TYPES:
+        allowed = ", ".join(sorted(VALID_PIN_TYPES))
+        raise ValueError(f"Unsupported pin type '{raw_type}'. Allowed values: {allowed}")
+    return normalized
+
+
+def parse_show_in_ui(raw_hidden: str) -> bool:
+    """Convert Hidden CSV column to show_in_ui boolean."""
+    normalized = raw_hidden.strip().lower()
+    if not normalized:
+        return True
+
+    if normalized in {"true", "yes", "1", "hidden", "hide"}:
+        return False
+    if normalized in {"false", "no", "0", "visible", "show", "shown"}:
+        return True
+
+    raise ValueError(
+        f"Unsupported hidden value '{raw_hidden}'. Use true/false (or hidden/visible)."
+    )
+
+
 def build_pin_map(csv_path: Path) -> dict[str, dict[str, object]]:
     """Build pin map payload from CSV rows."""
     pins: dict[str, dict[str, object]] = {}
@@ -52,11 +101,15 @@ def build_pin_map(csv_path: Path) -> dict[str, dict[str, object]]:
             if not pin or not description:
                 continue
 
+            explicit_pin_type = normalize_pin_type(row.get("Type") or "")
+            raw_hidden = row.get("Hidden") or row.get("Expose") or ""
+            show_in_ui = parse_show_in_ui(raw_hidden)
             select_options = parse_select_options(description)
-            default_pin_type = infer_default_type(description, select_options)
+            default_pin_type = explicit_pin_type or infer_default_type(description, select_options)
 
             payload: dict[str, object] = {
                 "description": description,
+                "show_in_ui": show_in_ui,
             }
             if default_pin_type:
                 payload["default_pin_type"] = default_pin_type

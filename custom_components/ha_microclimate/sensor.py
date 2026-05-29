@@ -18,6 +18,7 @@ from . import BlynkEntity
 from .const import (
     COMMON_UNITS,
     CONF_DEVICE_CLASS,
+    CONF_ENABLED_BY_DEFAULT,
     CONF_UNIT,
     DOMAIN,
     PIN_TYPE_SENSOR,
@@ -32,7 +33,12 @@ class BlynkSensor(BlynkEntity, SensorEntity):
 
     def __init__(self, coordinator, pin, config):
         """Initialize the sensor."""
-        super().__init__(coordinator, pin, config["pin_name"])
+        super().__init__(
+            coordinator,
+            pin,
+            config["pin_name"],
+            enabled_by_default=config.get(CONF_ENABLED_BY_DEFAULT, True),
+        )
 
         device_class = config.get(CONF_DEVICE_CLASS)
         self._attr_device_class = SENSOR_DEVICE_CLASSES.get(device_class)

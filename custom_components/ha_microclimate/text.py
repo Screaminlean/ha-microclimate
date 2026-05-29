@@ -17,6 +17,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import BlynkEntity
 from .const import (
+    CONF_ENABLED_BY_DEFAULT,
     CONF_PIN_NAME,
     CONF_PIN_TYPE,
     DOMAIN,
@@ -34,7 +35,12 @@ class BlynkText(BlynkEntity, TextEntity):
 
     def __init__(self, coordinator, api, pin, config):
         """Initialize the text input."""
-        super().__init__(coordinator, pin, config[CONF_PIN_NAME])
+        super().__init__(
+            coordinator,
+            pin,
+            config[CONF_PIN_NAME],
+            enabled_by_default=config.get(CONF_ENABLED_BY_DEFAULT, True),
+        )
         self._api = api
         self._attr_native_min = config.get("min_length", INPUT_TEXT_MIN_LENGTH)
         self._attr_native_max = config.get("max_length", INPUT_TEXT_MAX_LENGTH)

@@ -184,6 +184,7 @@ class BlynkEntity(CoordinatorEntity):
         coordinator: MicroclimateDataUpdateCoordinator,
         pin: str,
         name: str,
+        enabled_by_default: bool = True,
     ) -> None:
         """Initialize the entity.
         
@@ -204,6 +205,7 @@ class BlynkEntity(CoordinatorEntity):
 
         self._attr_name = name
         self._attr_unique_id = f"{DOMAIN}_{coordinator.entry_id}_{self._pin}"
+        self._attr_entity_registry_enabled_default = enabled_by_default
         self._attr_device_info = coordinator.device_info
         self._attr_attribution = ATTRIBUTION
 

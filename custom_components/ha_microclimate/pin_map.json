@@ -2,118 +2,173 @@
   "source": "docs/Evo_Blynk_Pins.csv",
   "pins": {
     "V0": {
-      "description": "Yellow Channel Current Temperature"
+      "description": "Yellow Channel Current Temperature",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V2": {
-      "description": "Blue Channel Current Temperature"
+      "description": "Blue Channel Current Temperature",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V4": {
-      "description": "Yellow Channel Live Output Percentage"
+      "description": "Yellow Channel Live Output Percentage",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V6": {
-      "description": "Blue Channel Live Output Percentage"
+      "description": "Blue Channel Live Output Percentage",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V16": {
       "description": "Yellow Channel Name",
+      "show_in_ui": true,
       "default_pin_type": "input_text"
     },
     "V18": {
       "description": "Blue Channel Name",
+      "show_in_ui": true,
       "default_pin_type": "input_text"
     },
     "V20": {
-      "description": "Season 1 Start Date DD/MM"
+      "description": "Season 1 Start Date DD/MM",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V21": {
-      "description": "Season 2 Start Date DD/MM"
+      "description": "Season 2 Start Date DD/MM",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V22": {
-      "description": "Season 3 Start Date DD/MM"
+      "description": "Season 3 Start Date DD/MM",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V23": {
-      "description": "Season 4 Start Date DD/MM"
+      "description": "Season 4 Start Date DD/MM",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V26": {
-      "description": "Thermostat Date"
+      "description": "Thermostat Date",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V27": {
-      "description": "Thermostat Time"
+      "description": "Thermostat Time",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V29": {
       "description": "Thermostat Name",
+      "show_in_ui": true,
       "default_pin_type": "input_text"
     },
     "V31": {
       "description": "Yellow Channel Name",
+      "show_in_ui": true,
       "default_pin_type": "input_text"
     },
     "V32": {
       "description": "Yellow Channel Season 1 Daytime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V33": {
-      "description": "Yellow Channel Season 1 Daytime Temp Setpoint"
+      "description": "Yellow Channel Season 1 Daytime Temp Setpoint",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V34": {
       "description": "Yellow Channel Season 1 Nighttime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V35": {
-      "description": "Yellow Channel Season 1 Nighttime Temp Setpoint"
+      "description": "Yellow Channel Season 1 Nighttime Temp Setpoint",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V36": {
       "description": "Yellow Channel Season 2 Daytime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V37": {
-      "description": "Yellow Channel Season 2 Daytime Temp Setpoint"
+      "description": "Yellow Channel Season 2 Daytime Temp Setpoint",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V38": {
       "description": "Yellow Channel Season 2 Nighttime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V39": {
-      "description": "Yellow Channel Season 2 Nighttime Temp Setpoint"
+      "description": "Yellow Channel Season 2 Nighttime Temp Setpoint",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V40": {
       "description": "Yellow Channel Season 3 Daytime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V41": {
-      "description": "Yellow Channel Season 3 Daytime Temp Setpoint"
+      "description": "Yellow Channel Season 3 Daytime Temp Setpoint",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V42": {
       "description": "Yellow Channel Season 3 Nighttime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V43": {
-      "description": "Yellow Channel Season 3 Nighttime Temp Setpoint"
+      "description": "Yellow Channel Season 3 Nighttime Temp Setpoint",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V44": {
       "description": "Yellow Channel Season 4 Daytime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V45": {
-      "description": "Yellow Channel Season 4 Daytime Temp Setpoint"
+      "description": "Yellow Channel Season 4 Daytime Temp Setpoint",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V46": {
       "description": "Yellow Channel Season 4 Nighttime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V47": {
-      "description": "Yellow Channel Season 4 Nighttime Temp Setpoint"
+      "description": "Yellow Channel Season 4 Nighttime Temp Setpoint",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V48": {
-      "description": "Yellow Channel Ramp Time"
+      "description": "Yellow Channel Ramp Time",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V49": {
-      "description": "Yellow Channel Under Temperature Alarm"
+      "description": "Yellow Channel Under Temperature Alarm",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V50": {
-      "description": "Yellow Channel Over Temperature Alarm"
+      "description": "Yellow Channel Over Temperature Alarm",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V52": {
       "description": "Yellow Channel Mode Selector (0=Fixed 1=Heating 2=Cooling)",
+      "show_in_ui": true,
       "default_pin_type": "select",
       "select_options": {
         "0": "Fixed",
@@ -123,6 +178,7 @@
     },
     "V53": {
       "description": "Yellow Channel Timing Selector (0=Constant 1=Day/Night 2=Multi 3=Seasons)",
+      "show_in_ui": true,
       "default_pin_type": "select",
       "select_options": {
         "0": "Constant",
@@ -133,6 +189,7 @@
     },
     "V54": {
       "description": "Yellow Channel Control Selector (0=Pulse 1=Dimming)",
+      "show_in_ui": true,
       "default_pin_type": "select",
       "select_options": {
         "0": "Pulse",
@@ -141,48 +198,63 @@
     },
     "V91": {
       "description": "Blue Channel Name",
+      "show_in_ui": true,
       "default_pin_type": "input_text"
     },
     "V92": {
       "description": "Blue Channel Season 1 Daytime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V94": {
       "description": "Blue Channel Season 1 Nighttime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V96": {
       "description": "Blue Channel Season 2 Daytime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V98": {
       "description": "Blue Channel Season 2 Nighttime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V100": {
       "description": "Blue Channel Season 3 Daytime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V102": {
       "description": "Blue Channel Season 3 Nighttime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V104": {
       "description": "Blue Channel Season 4 Daytime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V106": {
       "description": "Blue Channel Season 4 Nighttime Start Time",
+      "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
     "V108": {
-      "description": "Blue Channel Ramp Time"
+      "description": "Blue Channel Ramp Time",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V109": {
-      "description": "Blue Channel Under Temperature Alarm"
+      "description": "Blue Channel Under Temperature Alarm",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     },
     "V110": {
-      "description": "Blue Channel Over Temperature Alarm"
+      "description": "Blue Channel Over Temperature Alarm",
+      "show_in_ui": true,
+      "default_pin_type": "sensor"
     }
   }
 }

@@ -16,6 +16,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import BlynkEntity
 from .const import (
+    CONF_ENABLED_BY_DEFAULT,
     CONF_PIN_NAME,
     CONF_PIN_TYPE,
     DOMAIN,
@@ -31,7 +32,12 @@ class BlynkSelect(BlynkEntity, SelectEntity):
 
     def __init__(self, coordinator, api, pin, config):
         """Initialize select entity."""
-        super().__init__(coordinator, pin, config[CONF_PIN_NAME])
+        super().__init__(
+            coordinator,
+            pin,
+            config[CONF_PIN_NAME],
+            enabled_by_default=config.get(CONF_ENABLED_BY_DEFAULT, True),
+        )
         self._api = api
 
         known_options = get_select_mapping(self._pin)

@@ -16,7 +16,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import BlynkEntity
-from .const import CONF_DEVICE_CLASS, DOMAIN, PIN_TYPE_SWITCH, SWITCH_DEVICE_CLASSES
+from .const import (
+    CONF_DEVICE_CLASS,
+    CONF_ENABLED_BY_DEFAULT,
+    DOMAIN,
+    PIN_TYPE_SWITCH,
+    SWITCH_DEVICE_CLASSES,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,7 +32,12 @@ class BlynkSwitch(BlynkEntity, SwitchEntity):
 
     def __init__(self, coordinator, api, pin, config):
         """Initialize the switch."""
-        super().__init__(coordinator, pin, config["pin_name"])
+        super().__init__(
+            coordinator,
+            pin,
+            config["pin_name"],
+            enabled_by_default=config.get(CONF_ENABLED_BY_DEFAULT, True),
+        )
         self._api = api
         self._command_in_progress = False
 

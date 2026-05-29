@@ -3,22 +3,34 @@
     "step": {
       "user": {
         "title": "HA Microclimate Kurulumu",
-        "description": "Blynk kimlik dogrulama tokeninizi girin",
+        "description": "Microclimate kimlik dogrulama tokeninizi girin",
         "data": {
           "token": "Kimlik Dogrulama Token"
         },
         "data_description": {
-          "token": "Blynk uygulamasindan aldiginiz 32 karakterlik kimlik dogrulama token"
+          "token": "Microclimate web panelinden aldiginiz cihaz kimlik dogrulama tokeni"
         }
       },
       "http_config": {
         "title": "HTTP Yoklama Yapilandirmasi",
-        "description": "Blynk API'den ne siklikla veri cekilecegini ayarlayin",
+        "description": "Microclimate API'den ne siklikla veri cekilecegini ayarlayin",
         "data": {
           "scan_interval": "Guncelleme Araligi (saniye)"
         },
         "data_description": {
-          "scan_interval": "Blynk Cloud'dan ne siklikla veri cekilecegi (onerilen: 60-300 saniye)"
+          "scan_interval": "Microclimate API'den ne siklikla veri cekilecegi (onerilen: 60-300 saniye)"
+        }
+      },
+      "device_info": {
+        "title": "Cihaz Bilgileri",
+        "description": "Home Assistant icin cihazinizi tanimlayin. Tum pinler Cihaz Kaydi altinda bu cihazda gruplanacaktir.",
+        "data": {
+          "device_name": "Cihaz Adi",
+          "device_model": "Cihaz Modeli"
+        },
+        "data_description": {
+          "device_name": "Cihaziniz icin kullanici dostu bir ad (ornegin, 'Kaplumbaga Vivaryumu')",
+          "device_model": "Microclimate cihazinizin modeli"
         }
       },
       "connection": {
@@ -61,13 +73,13 @@
           "min_length": "Minimum metin uzunlugu",
           "max_length": "Maksimum metin uzunlugu",
           "pattern": "Metin dogrulama icin duzenli ifade",
-          "select_values": "Blynk'e gonderilecek ham degerler, etiketlerle ayni sirada",
+          "select_values": "Microclimate'e gonderilecek ham degerler, etiketlerle ayni sirada",
           "select_options": "Home Assistant'ta gorulecek etiketler, ham degerlerle ayni sirada"
         }
       }
     },
     "error": {
-      "cannot_connect": "Blynk Cloud'a baglanilamadi",
+      "cannot_connect": "Microclimate Cloud'a baglanilamadi",
       "invalid_token_format": "Kimlik dogrulama token en az 10 karakter olmalidir",
       "no_pins_found": "Pin bulunamadi - cihaz yapilandirmanizi kontrol edin",
       "no_pins_selected": "En az bir pin secilmelidir",
@@ -87,7 +99,7 @@
           "scan_interval": "Guncelleme Araligi (saniye)"
         },
         "data_description": {
-          "scan_interval": "Blynk Cloud'dan ne siklikla veri cekilecegi (onerilen: 60-300 saniye)"
+          "scan_interval": "Microclimate API'den ne siklikla veri cekilecegi (onerilen: 60-300 saniye)"
         }
       }
     }

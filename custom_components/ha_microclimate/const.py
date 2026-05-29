@@ -25,6 +25,7 @@ CONF_PIN_TYPE: Final = "pin_type"
 CONF_PIN_NAME: Final = "pin_name"
 CONF_DEVICE_CLASS: Final = "device_class"
 CONF_UNIT: Final = "unit"
+CONF_ENABLED_BY_DEFAULT: Final = "enabled_by_default"
 
 # Defaults
 DEFAULT_SCAN_INTERVAL: Final = 120
@@ -56,6 +57,8 @@ PIN_TYPE_BUTTON: Final = "button"
 PIN_TYPE_INPUT_TEXT: Final = "input_text"
 PIN_TYPE_SELECT: Final = "select"
 PIN_TYPE_PACKED_TIME_TEXT: Final = "packed_time_text"
+
+PIN_UI_VISIBILITY_KEY: Final = "show_in_ui"
 
 PIN_TYPE_OPTIONS: Final = {
     PIN_TYPE_SENSOR: "Sensor",
