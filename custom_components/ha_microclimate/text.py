@@ -106,14 +106,15 @@ class BlynkPackedTimeText(BlynkText):
     """Text helper that formats packed time values for easier editing.
     
     The Microclimate device encodes times in a packed format:
-    - Format: {encoded_times}{timezone}{flag}
+    - Format: {time1}\0{time2}\0{timezone}\0{flag} (null byte separated)
     - Each time is encoded as a 5-digit number representing seconds from midnight
     - Example: 27000 = 27000 seconds = 7.5 hours = 07:30
     - Display format: HH:MM
     - Input formats accepted: "HH:MM" or raw packed format
     """
 
-    _PACKED_RE = re.compile(r"^(?P<digits>\d+)(?P<tz>[A-Za-z_]+\/[A-Za-z_]+)(?P<flag>\d+)$")
+    # Regex to match null-byte-separated packed time format
+    _PACKED_RE = re.compile(r"^(?P<times>[\d\x00]+)(?P<tz>[A-Za-z_/]+)\x00(?P<flag>\d+)$")
 
     @classmethod
     def _decode_time_value(cls, seconds_str: str) -> str:
@@ -175,20 +176,37 @@ class BlynkPackedTimeText(BlynkText):
         Returns:
             (list of HH:MM times, timezone, flag) or None if invalid
         """
+        # Strip whitespace that might cause matching issues
+        raw_value = raw_value.strip()
+        
+        _LOGGER.debug("Attempting to decode packed time value: '%s' (length: %d)", raw_value, len(raw_value))
+        
         match = cls._PACKED_RE.match(raw_value)
         if not match:
+            _LOGGER.warning(
+                "Failed to match packed time regex for value: '%s'. "
+                "Expected format: {time}\\0{time}\\0{timezone}\\0{flag}",
+                raw_value
+            )
             return None
 
-        digits = match.group("digits")
+        times_section = match.group("times")
         timezone = match.group("tz")
         flag = match.group("flag")
         
-        # Split into 5-digit chunks and decode each as seconds from midnight
+        # Split the times section by null bytes and decode each
+        time_strings = times_section.rstrip('\x00').split('\x00')
         times = []
-        for i in range(0, len(digits) - 4, 5):
-            seconds_str = digits[i:i+5]
-            decoded_time = cls._decode_time_value(seconds_str)
-            times.append(decoded_time)
+        for time_str in time_strings:
+            if time_str:  # Skip empty strings
+                decoded_time = cls._decode_time_value(time_str)
+                times.append(decoded_time)
+                _LOGGER.debug("Decoded time chunk '%s' to '%s'", time_str, decoded_time)
+        
+        _LOGGER.debug(
+            "Successfully decoded: times=%s, timezone='%s', flag='%s'",
+            times, timezone, flag
+        )
         
         return times, timezone, flag
 
@@ -197,7 +215,7 @@ class BlynkPackedTimeText(BlynkText):
         """Accept HH:MM format or raw format and return packed value.
         
         Accepted input formats:
-        - Raw packed format: "2700027000Europe/London0"
+        - Raw packed format: "27000\027000\0Europe/London\00"
         - Full format: "07:30 | Europe/London | 0"
         - Multiple times: "07:30, 19:00 | Europe/London | 0"
         """
@@ -223,9 +241,10 @@ class BlynkPackedTimeText(BlynkText):
                     if encoded.isdigit():
                         encoded_times.append(encoded.zfill(5))
                 
-                digits = "".join(encoded_times)
-                if digits and flag.isdigit():
-                    return f"{digits}{timezone}{flag}"
+                # Build packed format with null byte separators
+                if encoded_times and flag.isdigit():
+                    times_section = "\x00".join(encoded_times)
+                    return f"{times_section}\x00{timezone}\x00{flag}"
         
         # If just a time like "07:30", we can't encode without timezone/flag
         return stripped
