@@ -262,12 +262,22 @@ class BlynkPackedTimeText(BlynkText):
 
         times, timezone, flag = decoded
         
-        # For a single time (most common case), just show the time
+        # For a single time, just show the time
         if len(times) == 1:
             return times[0]
         
-        # For multiple times, show them comma-separated
-        return ", ".join(times)
+        # For multiple times, remove duplicates but preserve order
+        unique_times = []
+        for time in times:
+            if time not in unique_times:
+                unique_times.append(time)
+        
+        # If all times were the same, just show one
+        if len(unique_times) == 1:
+            return unique_times[0]
+        
+        # Otherwise show them comma-separated
+        return ", ".join(unique_times)
 
     @property
     def extra_state_attributes(self):
