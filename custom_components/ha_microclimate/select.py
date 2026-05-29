@@ -22,7 +22,7 @@ from .const import (
     DOMAIN,
     PIN_TYPE_SELECT,
 )
-from .pin_map_loader import get_select_mapping
+from .pin_map_loader import async_ensure_pin_map_loaded, get_select_mapping
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -116,6 +116,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Blynk select entities based on config_entry."""
+    # Pre-load pin map data to avoid blocking I/O during entity initialization
+    await async_ensure_pin_map_loaded(hass)
+    
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     api = hass.data[DOMAIN][entry.entry_id]["api"]
     pins_config = entry.data.get("pins", {})

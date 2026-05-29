@@ -46,7 +46,7 @@ from .const import (
     SUPPORTED_MODELS,
     SWITCH_DEVICE_CLASSES,
 )
-from .pin_map_loader import get_default_pin_type, get_pin_defaults, is_pin_visible_in_ui
+from .pin_map_loader import async_ensure_pin_map_loaded, get_default_pin_type, get_pin_defaults, is_pin_visible_in_ui
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -227,6 +227,9 @@ class BlynkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         try:
             pins = await self._api.get_all_pins()
             if pins:
+                # Pre-load pin map data to avoid blocking I/O
+                await async_ensure_pin_map_loaded(self.hass)
+                
                 self._discovered_pins = []
                 self._selectable_pins = []
                 self._pin_values = {}

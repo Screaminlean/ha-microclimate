@@ -103,13 +103,78 @@ class BlynkText(BlynkEntity, TextEntity):
 
 
 class BlynkPackedTimeText(BlynkText):
-    """Text helper that formats packed time values for easier editing."""
+    """Text helper that formats packed time values for easier editing.
+    
+    The Microclimate device encodes times in a packed format:
+    - Format: {encoded_times}{timezone}{flag}
+    - Each time is encoded as a 5-digit number representing seconds from midnight
+    - Example: 27000 = 27000 seconds = 7.5 hours = 07:30
+    - Display format: HH:MM
+    - Input formats accepted: "HH:MM" or raw packed format
+    """
 
     _PACKED_RE = re.compile(r"^(?P<digits>\d+)(?P<tz>[A-Za-z_]+\/[A-Za-z_]+)(?P<flag>\d+)$")
 
     @classmethod
+    def _decode_time_value(cls, seconds_str: str) -> str:
+        """Decode a 5-digit seconds value to HH:MM format.
+        
+        Args:
+            seconds_str: 5-digit string representing seconds from midnight (e.g., "27000")
+            
+        Returns:
+            Time in HH:MM format (e.g., "07:30")
+        """
+        try:
+            total_seconds = int(seconds_str)
+            hours = total_seconds // 3600
+            minutes = (total_seconds % 3600) // 60
+            return f"{hours:02d}:{minutes:02d}"
+        except (ValueError, ZeroDivisionError):
+            return seconds_str
+
+    @classmethod
+    def _encode_time_value(cls, time_str: str) -> str:
+        """Encode HH:MM format to 5-digit seconds value.
+        
+        Args:
+            time_str: Time in HH:MM format (e.g., "07:30")
+            
+        Returns:
+            5-digit seconds string (e.g., "27000")
+        """
+        try:
+            time_str = time_str.strip()
+            
+            # Parse HH:MM format
+            if ":" in time_str:
+                parts = time_str.split(":")
+                hours = int(parts[0])
+                minutes = int(parts[1])
+            elif len(time_str) == 4 and time_str.isdigit():
+                # Parse HHMM format
+                hours = int(time_str[:2])
+                minutes = int(time_str[2:4])
+            else:
+                return time_str
+            
+            # Validate time
+            if not (0 <= hours < 24 and 0 <= minutes < 60):
+                return time_str
+            
+            # Encode: (hours * 3600) + (minutes * 60) = seconds from midnight
+            total_seconds = (hours * 3600) + (minutes * 60)
+            return f"{total_seconds:05d}"
+        except (ValueError, IndexError):
+            return time_str
+
+    @classmethod
     def _decode_raw_value(cls, raw_value: str) -> tuple[list[str], str, str] | None:
-        """Decode packed value into chunks, timezone, and flag."""
+        """Decode packed value into time strings, timezone, and flag.
+        
+        Returns:
+            (list of HH:MM times, timezone, flag) or None if invalid
+        """
         match = cls._PACKED_RE.match(raw_value)
         if not match:
             return None
@@ -117,37 +182,57 @@ class BlynkPackedTimeText(BlynkText):
         digits = match.group("digits")
         timezone = match.group("tz")
         flag = match.group("flag")
-        chunks = [digits[i : i + 2] for i in range(0, len(digits), 2)]
-        return chunks, timezone, flag
+        
+        # Split into 5-digit chunks and decode each as seconds from midnight
+        times = []
+        for i in range(0, len(digits) - 4, 5):
+            seconds_str = digits[i:i+5]
+            decoded_time = cls._decode_time_value(seconds_str)
+            times.append(decoded_time)
+        
+        return times, timezone, flag
 
     @classmethod
     def _encode_formatted_value(cls, value: str) -> str:
-        """Accept either raw packed format or readable format and return packed value."""
+        """Accept HH:MM format or raw format and return packed value.
+        
+        Accepted input formats:
+        - Raw packed format: "2700027000Europe/London0"
+        - Full format: "07:30 | Europe/London | 0"
+        - Multiple times: "07:30, 19:00 | Europe/London | 0"
+        """
         stripped = value.strip()
+        
+        # If already in packed format, return as-is
         if cls._PACKED_RE.match(stripped):
             return stripped
 
-        parts = [part.strip() for part in stripped.split("|")]
-        if len(parts) != 3:
-            return stripped
-
-        times_part, timezone, flag = parts
-        tokens = [token for token in re.split(r"[\s,;]+", times_part) if token]
-        normalized_tokens = []
-        for token in tokens:
-            token = token.replace(":", "")
-            if token.isdigit():
-                normalized_tokens.append(token)
-
-        digits = "".join(normalized_tokens)
-        if not digits or not flag.isdigit():
-            return stripped
-
-        return f"{digits}{timezone}{flag}"
+        # Try to parse as "HH:MM | timezone | flag" format
+        if "|" in stripped:
+            parts = [part.strip() for part in stripped.split("|")]
+            if len(parts) == 3:
+                times_part, timezone, flag = parts
+                
+                # Extract and encode all times (comma or space separated)
+                time_tokens = [t.strip() for t in re.split(r"[,;\s]+", times_part) if t.strip() and ":" in t]
+                encoded_times = []
+                
+                for time_token in time_tokens:
+                    encoded = cls._encode_time_value(time_token)
+                    # Ensure 5 digits
+                    if encoded.isdigit():
+                        encoded_times.append(encoded.zfill(5))
+                
+                digits = "".join(encoded_times)
+                if digits and flag.isdigit():
+                    return f"{digits}{timezone}{flag}"
+        
+        # If just a time like "07:30", we can't encode without timezone/flag
+        return stripped
 
     @property
     def native_value(self) -> str:
-        """Return human-friendly value when the packed format is detected."""
+        """Return human-friendly time in HH:MM format."""
         raw_value = super().native_value
         if not raw_value:
             return raw_value
@@ -156,9 +241,14 @@ class BlynkPackedTimeText(BlynkText):
         if not decoded:
             return str(raw_value)
 
-        chunks, timezone, flag = decoded
-        times = " ".join(chunks)
-        return f"{times} | {timezone} | {flag}"
+        times, timezone, flag = decoded
+        
+        # For a single time (most common case), just show the time
+        if len(times) == 1:
+            return times[0]
+        
+        # For multiple times, show them comma-separated
+        return ", ".join(times)
 
     @property
     def extra_state_attributes(self):
@@ -171,21 +261,41 @@ class BlynkPackedTimeText(BlynkText):
         decoded = self._decode_raw_value(raw_value)
         if not decoded:
             attrs["raw_value"] = raw_value
+            attrs["friendly_format"] = "Unable to decode"
             return attrs
 
-        chunks, timezone, flag = decoded
+        times, timezone, flag = decoded
         attrs.update(
             {
                 "raw_value": raw_value,
-                "time_chunks": chunks,
+                "decoded_times": times,
                 "timezone": timezone,
                 "flag": flag,
+                "friendly_format": f"{', '.join(times)} ({timezone})",
             }
         )
         return attrs
 
     async def async_set_value(self, value: str) -> None:
-        """Allow setting readable values and convert them to packed format."""
+        """Allow setting time values in HH:MM format.
+        
+        Accepted formats:
+        - "07:30" - Single time (preserves existing timezone/flag)
+        - "07:30 | Europe/London | 0" - Full format
+        - "07:30, 19:00 | Europe/London | 0" - Multiple times
+        - "2700027000Europe/London0" - Raw packed format
+        """
+        # If user provides just a time, we need to preserve timezone/flag
+        if not self._PACKED_RE.match(value) and "|" not in value:
+            # Get current value to extract timezone and flag
+            current_raw = str(self.coordinator.data.get(self._pin, ""))
+            decoded_current = self._decode_raw_value(current_raw)
+            
+            if decoded_current:
+                _, timezone, flag = decoded_current
+                # Reconstruct with new time but existing timezone/flag
+                value = f"{value} | {timezone} | {flag}"
+        
         packed_value = self._encode_formatted_value(value)
         await super().async_set_value(packed_value)
 

@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
+
+from homeassistant.core import HomeAssistant
 
 from .const import PIN_TYPE_SENSOR
 
@@ -15,7 +18,12 @@ _LOGGER = logging.getLogger(__name__)
 
 @lru_cache(maxsize=1)
 def load_pin_map() -> dict[str, dict[str, Any]]:
-    """Load pin metadata generated from docs/Evo_Blynk_Pins.csv."""
+    """Load pin metadata generated from docs/Evo_Blynk_Pins.csv.
+    
+    This function uses lru_cache to ensure the file is only read once.
+    For async contexts, call async_ensure_pin_map_loaded first to avoid
+    blocking I/O in the event loop.
+    """
     pin_map_path = Path(__file__).with_name("pin_map.json")
     if not pin_map_path.exists():
         return {}
@@ -30,6 +38,16 @@ def load_pin_map() -> dict[str, dict[str, Any]]:
     if not isinstance(pins, dict):
         return {}
     return pins
+
+
+async def async_ensure_pin_map_loaded(hass: HomeAssistant) -> None:
+    """Pre-load pin map data in executor to avoid blocking event loop.
+    
+    This should be called once during async setup before any synchronous
+    code needs to access pin map data. The actual load_pin_map function
+    uses lru_cache, so subsequent calls are instant.
+    """
+    await hass.async_add_executor_job(load_pin_map)
 
 
 def get_pin_defaults(pin: str) -> dict[str, Any]:
