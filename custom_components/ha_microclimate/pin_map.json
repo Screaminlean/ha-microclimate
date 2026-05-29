@@ -55,6 +55,11 @@
       "default_pin_type": "input_text",
       "pattern": "^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])$"
     },
+    "V25": {
+      "description": "Temperature Units Toggle Trigger",
+      "show_in_ui": true,
+      "default_pin_type": "switch"
+    },
     "V26": {
       "description": "Thermostat Date",
       "show_in_ui": true,
@@ -210,40 +215,80 @@
       "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
+    "V93": {
+      "description": "Blue Channel Season 1 Daytime Power Toggle",
+      "show_in_ui": true,
+      "default_pin_type": "switch"
+    },
     "V94": {
       "description": "Blue Channel Season 1 Nighttime Start Time",
       "show_in_ui": true,
       "default_pin_type": "packed_time_text"
+    },
+    "V95": {
+      "description": "Blue Channel Season 1 Nighttime Power Toggle",
+      "show_in_ui": true,
+      "default_pin_type": "switch"
     },
     "V96": {
       "description": "Blue Channel Season 2 Daytime Start Time",
       "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
+    "V97": {
+      "description": "Blue Channel Season 2 Daytime Power Toggle",
+      "show_in_ui": true,
+      "default_pin_type": "switch"
+    },
     "V98": {
       "description": "Blue Channel Season 2 Nighttime Start Time",
       "show_in_ui": true,
       "default_pin_type": "packed_time_text"
+    },
+    "V99": {
+      "description": "Blue Channel Season 2 Nighttime Power Toggle",
+      "show_in_ui": true,
+      "default_pin_type": "switch"
     },
     "V100": {
       "description": "Blue Channel Season 3 Daytime Start Time",
       "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
+    "V101": {
+      "description": "Blue Channel Season 3 Daytime Power Toggle",
+      "show_in_ui": true,
+      "default_pin_type": "switch"
+    },
     "V102": {
       "description": "Blue Channel Season 3 Nighttime Start Time",
       "show_in_ui": true,
       "default_pin_type": "packed_time_text"
+    },
+    "V103": {
+      "description": "Blue Channel Season 3 Nighttime Power Toggle",
+      "show_in_ui": true,
+      "default_pin_type": "switch"
     },
     "V104": {
       "description": "Blue Channel Season 4 Daytime Start Time",
       "show_in_ui": true,
       "default_pin_type": "packed_time_text"
     },
+    "V105": {
+      "description": "Blue Channel Season 4 Daytime Power Toggle",
+      "show_in_ui": true,
+      "default_pin_type": "switch"
+    },
     "V106": {
       "description": "Blue Channel Season 4 Nighttime Start Time",
       "show_in_ui": true,
       "default_pin_type": "packed_time_text"
+    },
+    "V107": {
+      "description": "Blue Channel Season 4 Nighttime Power Toggle",
+      "show_in_ui": true,
+      "default_pin_type": "switch"
     },
     "V108": {
       "description": "Blue Channel Ramp Time (minutes)",
